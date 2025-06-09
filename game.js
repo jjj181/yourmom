@@ -10,6 +10,8 @@ class Game {
         this.time = 0;
         this.isGameRunning = false;
 
+        this.scene.background = new THREE.Color(0x87CEEB); // 設置天空藍色背景
+
         this.init();
     }
 
@@ -25,16 +27,20 @@ class Game {
         // 建立賽道
         this.createTrack();
 
+        // 建立環境裝飾
+        this.createEnvironment();
+
         // 建立摩托車
         this.createMotorcycle();
 
-        // 添加環境光源
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        // 添加環境光源 - 調亮
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
         this.scene.add(ambientLight);
 
-        // 添加平行光源
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(5, 5, 5);
+        // 添加平行光源 - 模擬太陽光
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        directionalLight.position.set(-50, 100, 0);
+        directionalLight.castShadow = true;
         this.scene.add(directionalLight);
 
         // 事件監聽
@@ -70,6 +76,67 @@ class Game {
         rightBorder.position.x = 10;
         rightBorder.position.y = 0.5;
         this.scene.add(rightBorder);
+    }
+
+    createEnvironment() {
+        // 創建樹木
+        const createTree = (x, z) => {
+            const treeGroup = new THREE.Group();
+
+            // 樹幹
+            const trunkGeometry = new THREE.CylinderGeometry(0.2, 0.3, 2, 8);
+            const trunkMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+            const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+            trunk.position.y = 1;
+            treeGroup.add(trunk);
+
+            // 樹冠
+            const leavesGeometry = new THREE.ConeGeometry(1.5, 3, 8);
+            const leavesMaterial = new THREE.MeshPhongMaterial({ color: 0x228B22 });
+            const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
+            leaves.position.y = 3;
+            treeGroup.add(leaves);
+
+            treeGroup.position.set(x, 0, z);
+            return treeGroup;
+        };
+
+        // 創建廣告牌
+        const createBillboard = (x, z, rotation) => {
+            const billboardGroup = new THREE.Group();
+
+            // 廣告牌支柱
+            const poleGeometry = new THREE.CylinderGeometry(0.2, 0.2, 4, 8);
+            const poleMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
+            const pole = new THREE.Mesh(poleGeometry, poleMaterial);
+            pole.position.y = 2;
+            billboardGroup.add(pole);
+
+            // 廣告牌面板
+            const boardGeometry = new THREE.BoxGeometry(6, 3, 0.2);
+            const boardMaterial = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
+            const board = new THREE.Mesh(boardGeometry, boardMaterial);
+            board.position.y = 4;
+            billboardGroup.add(board);
+
+            billboardGroup.position.set(x, 0, z);
+            billboardGroup.rotation.y = rotation;
+            return billboardGroup;
+        };
+
+        // 在賽道兩側添加樹木
+        for(let z = 0; z > -900; z -= 30) {
+            // 左側樹木
+            this.scene.add(createTree(-13, z));
+            // 右側樹木
+            this.scene.add(createTree(13, z));
+
+            // 每隔一段距離添加廣告牌
+            if(z % 90 === 0) {
+                this.scene.add(createBillboard(-16, z + 15, Math.PI / 4));
+                this.scene.add(createBillboard(16, z + 15, -Math.PI / 4));
+            }
+        }
     }
 
     createMotorcycle() {
