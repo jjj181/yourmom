@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D摩托車競速遊戲</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <div id="game-container">
+        <div id="ui-overlay">
+            <div id="speed">速度: <span id="speed-value">0</span> km/h</div>
+            <div id="time">時間: <span id="time-value">0</span></div>
+        </div>
+        <div id="menu" class="menu">
+            <h1>3D摩托車競速</h1>
+            <button id="start-button">開始遊戲</button>
+            <div id="instructions">
+                <h2>操作說明</h2>
+                <p>← →：左右轉向</p>
+                <p>↑：加速</p>
+                <p>↓：減速/煞車</p>
+            </div>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
